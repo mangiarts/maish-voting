@@ -215,7 +215,7 @@
         <!-- Admin Form to Manually Add Contestants (Hidden Until Login) -->
         <section id="adminForm" style="display: none;">
             <h2>Add New Contestant</h2>
-            <form id="adminAddForm" action="register.php" method="POST" enctype="multipart/form-data">
+            <form id="adminAddForm">
                 <input type="file" id="profilePic" name="profilePic" accept="image/*" required>
                 <input type="text" id="fullName" name="name" placeholder="Full Name" required>
                 <input type="text" id="artistName" name="artistName" placeholder="Artist Name" required>
@@ -311,50 +311,95 @@
     </div>
 
     <script>
-        function checkAdmin() {
-            const adminPassword = document.getElementById("adminPassword").value;
-            if (adminPassword === "admin123") {
-                document.getElementById("adminLogin").style.display = "none";
-                document.getElementById("adminForm").style.display = "block";
-                document.getElementById("contestantList").style.display = "block";
-                loadContestants();
-            } else {
-                alert("Incorrect password!");
+        document.getElementById("adminAddForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+    
+            // Collect Form Data
+            const formData = {
+                action: "addContestant",
+                fullName: document.getElementById("fullName").value.trim(),
+                artistName: document.getElementById("artistName").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                phone: document.getElementById("phone").value.trim(),
+                idNumber: document.getElementById("idNumber").value.trim(),
+                talentUrl: document.getElementById("talentUrl").value.trim(),
+                gender: document.getElementById("gender").value.trim(),
+                talentCategory: document.getElementById("talentCategory").value.trim(),
+                county: document.getElementById("county").value.trim(),
+                profilePicURL: document.getElementById("profilePic").files[0] ? URL.createObjectURL(document.getElementById("profilePic").files[0]) : "",
+                uniqueCode: `TTS-${Date.now()}`
+            };
+    
+            // Validation
+            if (!formData.fullName || !formData.artistName || !formData.email || !formData.phone) {
+                alert("Please fill in all required fields.");
+                return;
             }
-        }
+    
+            const scriptURL = "https://script.google.com/macros/s/AKfycbwZTF1mkiyMBgMdGfD2u7qhrFW3PDepBBXdvnAMtfMLJk69JH9JBeiDc4RLp7OCs67v/exec";
+    
+            fetch(scriptURL, {
+                method: "POST",
+                body: JSON.stringify(formData),
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Contestant added successfully!");
+                    document.getElementById("adminAddForm").reset();
+                    loadContestants(); // Reload contestants
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => {
+                alert("Network error! Please try again.");
+                console.error("Error:", error);
+            });
+            function loadContestants() {
+                const scriptURL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
-        function loadContestants() {
-            const contestantListContainer = document.getElementById("contestantListContainer");
-            contestantListContainer.innerHTML = "";
-
-            fetch('get_contestants.php')
+                fetch(scriptURL)
                 .then(response => response.json())
-                .then(contestants => {
-                    contestants.forEach(contestant => {
+                .then(data => {
+                    if (data.status === "error") {
+                        alert("Error loading contestants: " + data.message);
+                        return;
+                    }
+
+                    const container = document.getElementById("contestantListContainer");
+                    container.innerHTML = "";
+
+                    data.data.forEach(contestant => {
                         const card = document.createElement("div");
                         card.classList.add("contestant-card");
 
                         card.innerHTML = `
-                            <img src="${contestant.profilePic}" alt="${contestant.artistName}">
-                            <div>
-                                <h3>${contestant.fullName}</h3>
-                                <p><strong>Artist Name:</strong> ${contestant.artistName}</p>
-                                <p><strong>Email:</strong> ${contestant.email}</p>
-                                <p><strong>Phone:</strong> ${contestant.phone}</p>
-                                <p><strong>ID Number:</strong> ${contestant.idNumber}</p>
-                                <p><strong>Talent URL:</strong> <a href="${contestant.talentUrl}" target="_blank">View Talent</a></p>
-                                <p><strong>Gender:</strong> ${contestant.gender}</p>
-                                <p><strong>Talent Category:</strong> ${contestant.talentCategory}</p>
-                                <p><strong>County:</strong> ${contestant.county}</p>
-                            </div>
+                            <img src="${contestant.profilePicURL}" alt="${contestant.fullName}">
+                            <h3>${contestant.fullName}</h3>
+                            <p><strong>Artist Name:</strong> ${contestant.artistName}</p>
+                            <p><strong>Email:</strong> ${contestant.email}</p>
+                            <p><strong>Phone:</strong> ${contestant.phone}</p>
+                            <p><strong>Talent URL:</strong> <a href="${contestant.talentUrl}" target="_blank">View Talent</a></p>
+                            <p><strong>Talent Category:</strong> ${contestant.talentCategory}</p>
+                            <p><strong>County:</strong> ${contestant.county}</p>
+                            <p><strong>Unique Code:</strong> ${contestant.uniqueCode}</p>
+                            <p><strong>Votes:</strong> ${contestant.votes}</p>
                         `;
 
-                        contestantListContainer.appendChild(card);
+                        container.appendChild(card);
                     });
+                })
+                .catch(error => {
+                    alert("Network error! Please try again.");
+                    console.error("Error:", error);
                 });
-        }
+            }
 
-        document.addEventListener("DOMContentLoaded", loadContestants);
+            loadContestants();
+        });
     </script>
+    
 </body>
 </html>
