@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maishmaxx Talent Voting</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Maishmaxx Talent Search</h1>
+    </header>
+    
+    <main>
+        <section id="talent-categories">
+            <!-- Talent categories and contestants will be dynamically inserted here -->
+        </section>
+    </main>
+    
+    <footer>
+        <p><a href="admin.html">Admin</a></p>
+        
+    </footer>
+    
+    
+    <script>
+        const contestants = {
+            "Music": [
+                { id: "MMTS-001", name: "John Doe", image: "images/facebook.png", votes: 0 },
+                { id: "MMTS-002", name: "Jane Smith", image: "images/TTS-002.jpg", votes: 0 },
+                { id: "MMTS-013", name: "MaishMaxx", image: "images/CEO.jpg", votes: 0 },
+                { id: "MMTS-014", name: "MaishMaxx", image: "images/CEO", votes: 0 }
+            ],
+            "Dancing": [
+                { id: "MMTS-003", name: "Alex Turner", image: "alex.jpg", votes: 0 },
+                { id: "MMTS-004", name: "Maria Lopez", image: "maria.jpg", votes: 0 }
+            ],
+            "Dj": [
+                { id: "MMTS-005", name: "David Lee", image: "david.jpg", votes: 0 },
+                { id: "MMTS-006", name: "Sarah Johnson", image: "sarah.jpg", votes: 0 }
+            ],
+            "MC": [
+                { id: "MMTS-007", name: "Michael Brown", image: "michael.jpg", votes: 0 },
+                { id: "MMTS-008", name: "Emily Wilson", image: "emily.jpg", votes: 0 }
+            ],
+            "Acting": [
+                { id: "MMTS-009", name: "Michael Brown", image: "michael.jpg", votes: 0 },
+                { id: "MMTS-010", name: "Emily Wilson", image: "emily.jpg", votes: 0 }
+            ],
+            "Art": [
+                { id: "MMTS-011", name: "Michael Brown", image: "michael.jpg", votes: 0 },
+                { id: "MMTS-012", name: "Emily Wilson", image: "emily.jpg", votes: 0 }
+            ]
+        };
+        
+        function displayContestants() {
+            const container = document.getElementById("talent-categories");
+            container.innerHTML = "";
+            for (const category in contestants) {
+                const section = document.createElement("div");
+                section.innerHTML = `<h2>${category}</h2>`;
+                
+                const categoryContainer = document.createElement("div");
+                categoryContainer.classList.add("category-container");
+                
+                contestants[category].forEach(contestant => {
+                    const card = document.createElement("div");
+                    card.classList.add("card");
+                    card.innerHTML = `
+                        <img src="${contestant.image}" alt="${contestant.name}">
+                        <h3>${contestant.name}</h3>
+                        <p>Code: ${contestant.id}</p>
+                        <p>Votes: <span id="votes-${contestant.id}">${contestant.votes}</span></p>
+                        <button onclick="vote('${contestant.id}', '${contestant.name}')">Vote</button>
+
+                    `;
+                    categoryContainer.appendChild(card);
+                });
+                
+                section.appendChild(categoryContainer);
+                container.appendChild(section);
+            }
+        }
+        
+        function vote(contestantId, contestantName) {
+            window.location.href = `Payment_Methods.html?contestantNumber=${encodeURIComponent(contestantId)}&contestantName=${encodeURIComponent(contestantName)}`;
+        }
+
+        
+        displayContestants();
+    </script>
+</body>
+</html>

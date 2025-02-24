@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lianna_Koi 254 - Electronics Shop</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8d3e0; /* Light pink background */
+            color: #4a2c4a; /* Darker purple for text */
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            position: relative;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        header img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .header-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            margin: 0 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons a img {
+            width: 40px;
+            height: 40px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons a:hover img {
+            transform: scale(1.1);
+        }
+
+        button {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #ff0040d8;
+            color: #fff;
+            padding: 10px 20px;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: #ff0040d8;
+            z-index: 1;
+        }
+
+        @keyframes rotateBackground {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hero div {
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
+        }
+
+        .hero button {
+            font-size: 1.2rem;
+        }
+
+        /* Logo Styles */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 3;
+        }
+
+        .logo img {
+            max-width: 100px;
+        }
+
+        /* About Section */
+        .about {
+            padding: 50px;
+            background-color: #F5F5F5;
+            text-align: center;
+        }
+
+        .about p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        .about img {
+            margin-top: 20px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ff0040d8;
+        }
+
+        /* Featured Services */
+        .services {
+            padding: 50px;
+            background-color: #F5F5F5;
+            text-align: center;
+        }
+
+        .services {
+            display: flex;
+            justify-content: space-around;
+            background: #000;
+            padding: 50px 20px;
+            color: #fff;
+        }
+
+        .service {
+            text-align: center;
+            width: 30%;
+            transition: transform 0.3s ease;
+        }
+
+        .service:hover {
+            transform: scale(1.1);
+        }
+
+        .service h3 {
+            margin-bottom: 15px;
+        }
+
+         /* Gallery Section */
+         .gallery {
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .gallery-grid img {
+            width: 100%;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-grid img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Contact Section */
+        .contact-info {
+      text-align: center;
+      margin-top: 50px;
+      padding: 20px;
+    }
+
+    .contact-info h2 {
+      font-family: 'Brasika', serif;
+      font-size: 36px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .contact-info p {
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .social-icons a {
+      margin: 0 15px;
+      transition: transform 0.3s ease;
+    }
+
+    .social-icons a img {
+      width: 40px;
+      height: 40px;
+      transition: transform 0.3s ease;
+    }
+
+    .social-icons a:hover img {
+      transform: scale(1.1);
+    }
+
+    .contact-form {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: rgba(0, 0, 0, 0.589);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .contact-form h2 {
+      font-family: 'Brasika', serif;
+      font-size: 32px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      outline: none;
+      border-color: #ff0040d8;
+    }
+
+    .contact-form button {
+      width: 100%;
+      padding: 14px;
+      background-color: #ff0040d8;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .contact-form button:hover {
+      background-color: #e47d97d8;
+      /* Darker amber */
+    }
+    footer {
+      text-align: center;
+      background-color: black;
+      color: white;
+      padding: 20px;
+      margin-top: 50px;
+    }
+
+    footer p {
+      font-size: 16px;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    footer a:hover {
+      color: #ff0040d8;
+    }
+    </style>
+</head>
+
+<body>
+
+    <!-- Logo -->
+    <!-- <div class="logo">
+        <img src="logo.jpg" alt="maishmaxx logo">
+    </div> -->
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <img src="header.jpg" alt="Maishmaxx Talent Search" class="hero-image">
+        <div class="hero-content">
+            <h1>Welcome to Maishmaxx Talent Search</h1>
+            <a href="contestants.html">
+                <button class="contact-button">See Our Contestants</button>
+            </a>
+            <div class="social-icons">
+                <a href="#" title="Facebook"><img src="icons/facebook.png" alt="Facebook"></a>
+                <a href="#" title="Tiktok"><img src="icons/Tiktok.png" alt="Tiktok"></a>
+                <a href="#" title="Instagram"><img src="icons/instagram.png" alt="Instagram"></a>
+                <a href="#" title="Youtube"><img src="icons/youtube.png" alt="YouTube"></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="about">
+        <h2>About Us</h2>
+        <p>At Maishmaxx Foundation, we believe that every child deserves love, care, and an opportunity to thrive. Our mission is to uplift orphans and the less privileged by providing them with the support they need to build a brighter future. Through our various initiatives, we strive to create a world where no one feels forgotten or left behind.<p>
+
+        <p>As part of our commitment to empowerment, we are thrilled to introduce the Maishmaxx Talent Search—a platform designed to discover and celebrate extraordinary talent. This event is not just about showcasing skills; it is a movement to transform lives. The top contestants will receive grand prizes, and proceeds from the competition will directly support our charity efforts, helping us provide education, shelter, and essential resources to those in need.<p>
+
+        <p>We invite you to be part of this journey—whether by participating, donating, or sponsoring a contestant. Your support can make a tangible difference in the lives of many, giving hope where it is needed most. Join us today and help us turn dreams into reality.<p>
+
+        <img src="CEO.jpg" alt="Ernest Maina">
+        <p><strong>Ernest Maina</strong><br>Founder & CEO</p>
+    </div>
+
+    <div class="contact">
+        
+        <section id="contact-card"class="contact-card">
+            
+            <h2>Contact Details</h2>
+            <div class="card">
+              <p><strong>Phone:</strong> <a href="https://wa.me/254734813003" target="_blank">+254 734 813 003</a></p>
+              <p><strong>Email:</strong> <a href="mailto:maishmaxxtv@gmail.com" target="_blank">maishmaxxtv@gmail.com</a></p>
+              <p><strong>Address:</strong> Nairobi, Kenya</p>
+              <p><strong>Follow us:</strong></p>
+              <div class="social-icons">
+                <a href="#" title="Facebook"><img src="icons/facebook.png" alt="Facebook"></a>
+                <a href="#" title="Tiktok"><img src="icons/Tiktok.png" alt="Tiktok"></a>
+                <a href="#" title="Instagram"><img src="icons/instagram.png" alt="Instagram"></a>
+                <a href="#" title="Youtube"><img src="icons/youtube.png" alt=""></a>
+              </div>
+            </div>
+            <h2>Get in Touch</h2>
+            <!-- <p>Have a project in mind? Let's make it happen!</p> -->
+          </section>
+          <style>
+            .contact-card {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              text-align: center;
+              margin-top: 50px;
+            }
+          
+            .card {
+              background: rgb(226, 224, 224);
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0 10px 30px rgba(240, 115, 57, 0.1);
+              max-width: 400px;
+              width: 90%;
+            }
+          
+            .card a {
+              color: #ff0040d8;
+              text-decoration: none;
+              font-weight: bold;
+            }
+          
+            .card a:hover {
+              color: #ff0040d8;
+            }
+          
+            .social-icons {
+              display: flex;
+              justify-content: center;
+              margin-top: 10px;
+            }
+          
+            .social-icons a {
+              margin: 0 10px;
+              transition: transform 0.3s ease;
+            }
+          
+            .social-icons a img {
+              width: 30px;
+              height: 30px;
+              transition: transform 0.3s ease;
+            }
+          
+            .social-icons a:hover img {
+              transform: scale(1.1);
+            }
+          </style>
+
+    </div>
+    <footer>
+        <p>Active 24/7 - We're always here to assist you!</p>
+        <a href="index.html/contact-card">Contact Us</a>
+      </footer>
+
+</body>
+
+</html>

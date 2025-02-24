@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maishmaxx Talent Voting</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Maishmaxx Talent Search</h1>
+    </header>
+    
+    <main>
+        <section id="talent-categories">
+            <!-- Talent categories and contestants will be dynamically inserted here -->
+        </section>
+    </main>
+    
+    <footer>
+        <p><a href="admin.html">Admin</a></p>
+        
+    </footer>
+    
+    
+    <script>
+        async function fetchContestants() {
+          const response = await fetch("https://script.google.com/macros/s/AKfycbwZTF1mkiyMBgMdGfD2u7qhrFW3PDepBBXdvnAMtfMLJk69JH9JBeiDc4RLp7OCs67v/exec");
+          const contestants = await response.json();
+      
+          const container = document.getElementById("talent-categories");
+          container.innerHTML = "";
+      
+          for (const category in contestants) {
+            const section = document.createElement("div");
+            section.innerHTML = `<h2>${category}</h2>`;
+      
+            const categoryContainer = document.createElement("div");
+            categoryContainer.classList.add("category-container");
+      
+            contestants[category].forEach(contestant => {
+              const card = document.createElement("div");
+              card.classList.add("card");
+              card.innerHTML = `
+                <img src="${contestant.image}" alt="${contestant.name}">
+                <h3>${contestant.name}</h3>
+                <p>Code: ${contestant.id}</p>
+                <button onclick="vote('${contestant.id}', '${contestant.name}')">Vote</button>
+              `;
+              categoryContainer.appendChild(card);
+            });
+      
+            section.appendChild(categoryContainer);
+            container.appendChild(section);
+          }
+        }
+      
+        function vote(contestantId, contestantName) {
+          window.location.href = `Payment_Methods.html?contestantNumber=${encodeURIComponent(contestantId)}&contestantName=${encodeURIComponent(contestantName)}`;
+        }
+      
+        fetchContestants();
+      </script>
+      
+
+
+</body>
+</html>

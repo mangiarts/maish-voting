@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Payments</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin: 0;
+        }
+        
+        #background-logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('logo.png') no-repeat center center;
+            background-size: cover;
+            opacity: 0.2;
+            z-index: -2;
+        }
+        .payment-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .payment-icons img {
+            width: 70px;
+            height: 70px;
+        }
+        .payment-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .payment-container button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .confirm-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #ccc;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="background-logo"></div>
+    <div class="payment-container" id="initialForm">
+        <div class="payment-icons">
+            <img src="images/mpesa-icon.png" alt="M-Pesa">
+            <!-- <img src="images/paypal-icon.png" alt="PayPal"> -->
+        </div>
+        <h2>Vote Payments</h2>
+        <p>Each vote costs KES 10. Enter your details below:</p>
+        <input type="number" id="votesAmount" placeholder="Enter Votes Amount" min="1" required>
+        <input type="text" id="yourName" placeholder="Your Name" required>
+        <input type="text" id="contestantNumber" placeholder="Contestant Number" readonly>
+        <input type="text" id="contestantName" placeholder="Contestant Name" readonly>
+        <button class="confirm-btn" onclick="showPaymentForm('mpesa')">Pay with M-Pesa</button>
+        <!-- <button class="confirm-btn" onclick="showPaymentForm('paypal')">Pay with PayPal</button> -->
+        <button class="cancel-btn" onclick="window.history.back()">Go Back</button>
+    </div>
+
+    <div class="payment-container hidden" id="paymentFormMpesa">
+        <div class="payment-icons">
+            <img src="images/mpesa-icon.png" alt="M-Pesa">
+        </div>
+        <h2>Confirm Payment</h2>
+        <p id="paymentAmountMpesa"></p>
+        <input type="tel" id="yourPhoneNumber" placeholder="07xxxxxxxx or 01xxxxxxxx" pattern="^(07|01)[0-9]{8}$" required>
+
+        <button class="confirm-btn" onclick="initiatePayment('mpesa')">Vote</button>
+        <button class="cancel-btn" onclick="hidePaymentForm('mpesa')">Go Back</button>
+    </div>
+
+    <div class="payment-container hidden" id="paymentFormPaypal">
+        <div class="payment-icons">
+            <img src="images/paypal-icon.png" alt="PayPal">
+        </div>
+        <h2>Confirm Payment</h2>
+        <p id="paymentAmountPaypal"></p>
+        <input type="email" id="voterEmail" placeholder="Your Email" required>
+        <!-- <button class="confirm-btn" onclick="initiatePayment('paypal')">Vote</button> -->
+        <button class="cancel-btn" onclick="hidePaymentForm('paypal')">Go Back</button>
+    </div>
+    
+
+    <script>
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Pre-fill the input fields with URL parameters
+        document.getElementById('contestantNumber').value = getUrlParameter('contestantNumber');
+        document.getElementById('contestantName').value = getUrlParameter('contestantName');
+
+
+        // Function to show the payment form
+        function showPaymentForm(method) {
+            const votesAmount = document.getElementById('votesAmount').value;
+            const amount = votesAmount * 10; // 1 vote = 10 KSH
+
+            if (votesAmount <= 0) {
+                alert('The number of votes must be greater than zero.');
+                return;
+            }
+
+            if (method === 'mpesa') {
+                document.getElementById('paymentAmountMpesa').textContent = `You are about to pay KES ${amount} for ${votesAmount} votes.`;
+                document.getElementById('initialForm').classList.add('hidden');
+                document.getElementById('paymentFormMpesa').classList.remove('hidden');
+            } else if (method === 'paypal') {
+                document.getElementById('paymentAmountPaypal').textContent = `You are about to pay USD ${(amount / 110).toFixed(2)} for ${votesAmount} votes.`; // Assuming 1 USD = 110 KES
+                document.getElementById('initialForm').classList.add('hidden');
+                document.getElementById('paymentFormPaypal').classList.remove('hidden');
+            }
+        }
+
+        // Function to hide the payment form and show the initial form
+        function hidePaymentForm(method) {
+            if (method === 'mpesa') {
+                document.getElementById('paymentFormMpesa').classList.add('hidden');
+            } else if (method === 'paypal') {
+                document.getElementById('paymentFormPaypal').classList.add('hidden');
+            }
+            document.getElementById('initialForm').classList.remove('hidden');
+        }
+
+        // Function to initiate payment
+        async function initiatePayment(method) {
+            const votesAmount = document.getElementById('votesAmount').value;
+            const yourName = document.getElementById('yourName').value;
+            const contestantNumber = document.getElementById('contestantNumber').value;
+            const contestantName = document.getElementById('contestantName').value;
+            const amount = votesAmount * 10; // 1 vote = 10 KSH
+
+            if (method === 'mpesa') {
+                const yourPhoneNumber = document.getElementById('yourPhoneNumber').value;
+                const phoneRegex = /^(07|01)[0-9]{8}$/;
+
+                if (!phoneRegex.test(yourPhoneNumber)) {
+                    alert("Invalid phone number! Please enter a 10-digit number starting with 07 or 01.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch('payment_methods/stk_initiate.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contestantCode: contestantNumber,
+                            contestantName: contestantName,
+                            votes: votesAmount,
+                            amount: amount,
+                            phone: yourPhoneNumber
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Payment successful! Thank you for voting.');
+                        window.location.href = 'results.html';
+                    } else {
+                        alert('Payment failed. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error processing payment:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>
