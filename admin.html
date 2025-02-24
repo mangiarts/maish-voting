@@ -316,13 +316,6 @@
 
     <script>
         
-        document.addEventListener("DOMContentLoaded", function () {
-            if (localStorage.getItem("admin_authenticated") === "true") {
-                document.getElementById("auth-popup").style.display = "none";
-                document.getElementById("admin-panel").style.display = "block";
-            }
-        });
-
         function authenticate() {
             const email = document.getElementById("admin-email").value;
             const password = document.getElementById("admin-password").value;
@@ -332,12 +325,12 @@
                 return;
             }
 
-            const scriptURL = "https://script.google.com/macros/s/AKfycbx0WbKCIcf99JvQBqTCYVVO8q9fSg9fYO4-owbGL6IIV_4BPAsGdA1H_d7G37GuqcjZlQ/exec"; // Replace with your script URL
+            const scriptURL = "https://script.google.com/macros/s/AKfycbzTV84aL1eH0lvMZbjIK24UpGmfvn8IvLPfN-A7JrTyo51nWETyEEqD8RzJQe011K-RiQ/exec"; // Replace with your actual Web App URL
 
             fetch(scriptURL, {
                 method: "POST",
-                body: JSON.stringify({ action: "login", email, password }),
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "login", email, password })
             })
             .then(response => response.json())
             .then(data => {
@@ -355,10 +348,6 @@
             });
         }
 
-        function logout() {
-            localStorage.removeItem("admin_authenticated");
-            location.reload();
-        }
 
 
         document.getElementById("adminAddForm").addEventListener("submit", function(event) {
