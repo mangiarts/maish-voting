@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Admin Panel - Maishmaxx Talent Search</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="admin.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -14,308 +16,114 @@
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea, #764ba2);
             margin: 0;
-            padding: 80px 20px 60px; /* Adjusted padding to account for header and footer */
         }
-        #background-logo {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('logo.png') no-repeat center center;
-            background-size: cover;
-            opacity: 0.2;
-            z-index: -2;
-        }
-        
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-            width: 400px;
-            text-align: center;
-        }
-        .upload-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .upload-btn {
-            width: 80px;
-            height: 80px;
-            background: #007bff;
-            color: white;
-            border-radius: 50%;
+
+        .auth-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 32px;
-            cursor: pointer;
-            border: none;
-            transition: background 0.3s;
-        }
-        .upload-btn:hover {
-            background: #0056b3;
-        }
-        .upload-text {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #333;
-        }
-        h2 {
-            font-family: 'Barkscript', cursive;
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 20px;
-            padding: 20px 0;
-        }
-        input, select {
             width: 100%;
-            padding: 14px;
-            margin: 12px 0;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        input:focus, select:focus {
-            border-color: #007bff;
-            outline: none;
-        }
-        .btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 14px;
-            cursor: pointer;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: background 0.3s;
-            margin-top: 20px;
-        }
-        .btn:hover {
-            background: #0056b3;
-        }
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .error {
-            border: 2px solid red;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
+            height: 100vh;
+            position: absolute;
             top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
+            left: 0;
+            background: rgba(0, 0, 0, 0.5);
         }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 8px;
+
+        .auth-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
             text-align: center;
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+            width: 350px;
         }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+
+        .auth-card h2 {
+            margin-bottom: 15px;
+            color: #333;
         }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .checkbox-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 12px 0;
-        }
-        .checkbox-container label {
-            margin-left: 5px;
-            margin-right: 15px;
-        }
-        header, footer {
+
+        .auth-card input {
             width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .auth-card button {
+            width: 100%;
+            padding: 12px;
             background: #007bff;
             color: white;
-            padding: 20px;
-            text-align: center;
-            position: fixed;
-            left: 0;
-            transition: opacity 0.3s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-        }
-        header {
-            top: 0;
-        }
-        footer {
-            bottom: 0;
-        }
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .nav-buttons button {
-            background: white;
-            color: #007bff;
             border: none;
-            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
             cursor: pointer;
-            border-radius: 5px;
-            font-size: 1em;
-            transition: background 0.3s;
         }
-        .nav-buttons button:hover {
-            background: #f0f0f0;
+
+        .auth-card button:hover {
+            background: #0056b3;
+        }
+
+        #adminForm, #contestantList {
+            display: none;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div id="background-logo"></div>
-    <header>
-        <h1>Admin Panel</h1>
-        <div class="nav-buttons">
-            <button onclick="window.location.href='index.html'">Home</button>
-            <button onclick="window.location.href='contestants.html'">Participants</button>
-            <button onclick="window.location.href='results.html'">Results</button>
+
+    <!-- Admin Authentication Popup -->
+    <div id="auth-popup" class="auth-container">
+        <div class="auth-card">
+            <h2>Admin Login</h2>
+            <input type="email" id="admin-email" placeholder="Enter Admin Email" required>
+            <input type="password" id="admin-password" placeholder="Enter Password" required>
+            <button onclick="authenticate()">Login</button>
         </div>
-    </header>
-
-    <div class="container">
-        <!-- Admin Login Form -->
-        <section id="adminLogin">
-            <div id="auth-popup" class="auth-container">
-                <div class="auth-card">
-                    <h2>Admin Login</h2>
-                    <input type="email" id="admin-email" placeholder="Enter Admin Email" required>
-                    <input type="password" id="admin-password" placeholder="Enter Password" required>
-                    <button onclick="authenticate()">Login</button>
-                </div>
-            </div>
-            
-            
-        </section>
-
-        <!-- Admin Form to Manually Add Contestants (Hidden Until Login) -->
-        <section id="adminForm" style="display: none;">
-            <h2>Add New Contestant</h2>
-            <form id="adminAddForm">
-                <input type="file" id="profilePic" name="profilePic" accept="image/*" required>
-                <input type="text" id="fullName" name="name" placeholder="Full Name" required>
-                <input type="text" id="artistName" name="artistName" placeholder="Artist Name" required>
-                <input type="email" id="email" name="email" placeholder="Email" required>
-                <input type="tel" id="phone" name="phone" placeholder="Phone Number" pattern="\d{10}" required>
-                <input type="text" id="idNumber" name="idNumber" placeholder="ID Number" required>
-                <input type="url" id="talentUrl" name="talentUrl" placeholder="Link to Talent (e.g., YouTube, SoundCloud)" required>
-                
-                <select id="gender" name="gender" required>
-                    <option value="" disabled selected>Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                </select>
-                <select id="talentCategory" name="talent" required>
-                    <option value="" disabled selected>Select Talent Category</option>
-                    <option value="Secular singing">Secular Singing</option>
-                    <option value="Gospel singing">Gospel Singing</option>
-                    <option value="dancing">Dancing</option>
-                    <option value="acting">Acting</option>
-                    <option value="modelling">Modelling</option>
-                    <option value="Art">Art</option>
-                    <option value="other">Other</option>
-                </select>
-                <select id="county" name="county" required>
-                    <option value="" disabled selected>Select County</option>
-                    <option value="baringo">Baringo</option>
-                    <option value="bomet">Bomet</option>
-                    <option value="bungoma">Bungoma</option>
-                    <option value="busia">Busia</option>
-                    <option value="elgeyo-marakwet">Elgeyo Marakwet</option>
-                    <option value="embu">Embu</option>
-                    <option value="garissa">Garissa</option>
-                    <option value="homa-bay">Homa Bay</option>
-                    <option value="isiolo">Isiolo</option>
-                    <option value="kajiado">Kajiado</option>
-                    <option value="kakamega">Kakamega</option>
-                    <option value="kericho">Kericho</option>
-                    <option value="kiambu">Kiambu</option>
-                    <option value="kilifi">Kilifi</option>
-                    <option value="kirinyaga">Kirinyaga</option>
-                    <option value="kisii">Kisii</option>
-                    <option value="kisumu">Kisumu</option>
-                    <option value="kitui">Kitui</option>
-                    <option value="kwale">Kwale</option>
-                    <option value="laikipia">Laikipia</option>
-                    <option value="lamu">Lamu</option>
-                    <option value="machakos">Machakos</option>
-                    <option value="makueni">Makueni</option>
-                    <option value="mandera">Mandera</option>
-                    <option value="marsabit">Marsabit</option>
-                    <option value="meru">Meru</option>
-                    <option value="migori">Migori</option>
-                    <option value="marsabit">Marsabit</option>
-                    <option value="mombasa">Mombasa</option>
-                    <option value="muranga">Murang'a</option>
-                    <option value="nairobi">Nairobi</option>
-                    <option value="nakuru">Nakuru</option>
-                    <option value="nandi">Nandi</option>
-                    <option value="narok">Narok</option>
-                    <option value="nyamira">Nyamira</option>
-                    <option value="nyandarua">Nyandarua</option>
-                    <option value="nyeri">Nyeri</option>
-                    <option value="samburu">Samburu</option>
-                    <option value="siaya">Siaya</option>
-                    <option value="taita-taveta">Taita Taveta</option>
-                    <option value="tana-river">Tana River</option>
-                    <option value="tharaka-nithi">Tharaka Nithi</option>
-                    <option value="trans-nzoia">Trans Nzoia</option>
-                    <option value="turkana">Turkana</option>
-                    <option value="uasin-gishu">Uasin Gishu</option>
-                    <option value="vihiga">Vihiga</option>
-                    <option value="wajir">Wajir</option>
-                    <option value="west-pokot">West Pokot</option>
-                </select>
-                
-                <div class="nav-buttons">
-                    <button type="submit">Add Contestant</button>
-                </div>
-                
-            </form>
-        </section>
-
     </div>
-    <div>
-        <!-- Contestant List (Hidden Until Login) -->
-        <section id="contestantList" style="display: none;">
-            <h2>Contestant List</h2>
-            <div class="contestant-list" id="contestantListContainer">
-                <!-- Contestant cards will be inserted here by JavaScript -->
-            </div>
-        </section>
+
+    <!-- Admin Panel (Hidden Until Login) -->
+    <div id="adminForm">
+        <h1>Admin Panel - Add Contestants</h1>
+        <form id="adminAddForm">
+            <input type="text" id="fullName" placeholder="Full Name" required>
+            <input type="text" id="artistName" placeholder="Artist Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="phone" placeholder="Phone Number" required>
+            <input type="text" id="idNumber" placeholder="ID Number">
+            <input type="text" id="talentUrl" placeholder="Talent Video URL">
+            <select id="gender">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+            <input type="text" id="talentCategory" placeholder="Talent Category" required>
+            <input type="text" id="county" placeholder="County" required>
+            <input type="file" id="profilePic" accept="image/*">
+            <button type="submit">Add Contestant</button>
+        </form>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <div id="contestantList">
+        <h2>Contestants List</h2>
+        <div id="contestantListContainer"></div>
     </div>
 
     <script>
-        
+        document.addEventListener("DOMContentLoaded", function () {
+            if (localStorage.getItem("admin_authenticated") === "true") {
+                document.getElementById("auth-popup").style.display = "none";
+                document.getElementById("adminForm").style.display = "block";
+                document.getElementById("contestantList").style.display = "block";
+            }
+            loadContestants();
+        });
+
         function authenticate() {
             const email = document.getElementById("admin-email").value;
             const password = document.getElementById("admin-password").value;
@@ -325,7 +133,7 @@
                 return;
             }
 
-            const scriptURL = "https://script.google.com/macros/s/AKfycbzTV84aL1eH0lvMZbjIK24UpGmfvn8IvLPfN-A7JrTyo51nWETyEEqD8RzJQe011K-RiQ/exec"; // Replace with your actual Web App URL
+            const scriptURL = "https://script.google.com/macros/s/AKfycbzTV84aL1eH0lvMZbjIK24UpGmfvn8IvLPfN-A7JrTyo51nWETyEEqD8RzJQe011K-RiQ/exec"; // Update this with your correct Web App URL
 
             fetch(scriptURL, {
                 method: "POST",
@@ -334,12 +142,14 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log("Login Response:", data); // Debugging
                 if (data.status === "success") {
                     localStorage.setItem("admin_authenticated", "true");
                     document.getElementById("auth-popup").style.display = "none";
-                    document.getElementById("admin-panel").style.display = "block";
+                    document.getElementById("adminForm").style.display = "block";
+                    document.getElementById("contestantList").style.display = "block";
                 } else {
-                    alert(data.message);
+                    alert("Login failed: " + data.message);
                 }
             })
             .catch(error => {
@@ -348,98 +158,50 @@
             });
         }
 
+        function logout() {
+            localStorage.removeItem("admin_authenticated");
+            location.reload();
+        }
 
+        function loadContestants() {
+            const scriptURL = "https://script.google.com/macros/s/AKfycbwZTF1mkiyMBgMdGfD2u7qhrFW3PDepBBXdvnAMtfMLJk69JH9JBeiDc4RLp7OCs67v/exec"; // Update with correct URL
 
-        document.getElementById("adminAddForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-    
-            // Collect Form Data
-            const formData = {
-                action: "addContestant",
-                fullName: document.getElementById("fullName").value.trim(),
-                artistName: document.getElementById("artistName").value.trim(),
-                email: document.getElementById("email").value.trim(),
-                phone: document.getElementById("phone").value.trim(),
-                idNumber: document.getElementById("idNumber").value.trim(),
-                talentUrl: document.getElementById("talentUrl").value.trim(),
-                gender: document.getElementById("gender").value.trim(),
-                talentCategory: document.getElementById("talentCategory").value.trim(),
-                county: document.getElementById("county").value.trim(),
-                profilePicURL: document.getElementById("profilePic").files[0] ? URL.createObjectURL(document.getElementById("profilePic").files[0]) : "",
-                uniqueCode: `TTS-${Date.now()}`
-            };
-    
-            // Validation
-            if (!formData.fullName || !formData.artistName || !formData.email || !formData.phone) {
-                alert("Please fill in all required fields.");
-                return;
-            }
-    
-            const scriptURL = "https://script.google.com/macros/s/AKfycbwZTF1mkiyMBgMdGfD2u7qhrFW3PDepBBXdvnAMtfMLJk69JH9JBeiDc4RLp7OCs67v/exec";
-    
-            fetch(scriptURL, {
-                method: "POST",
-                body: JSON.stringify(formData),
-                headers: { "Content-Type": "application/json" }
-            })
+            fetch(scriptURL)
             .then(response => response.json())
             .then(data => {
-                if (data.status === "success") {
-                    alert("Contestant added successfully!");
-                    document.getElementById("adminAddForm").reset();
-                    loadContestants(); // Reload contestants
-                } else {
-                    alert("Error: " + data.message);
+                if (data.status === "error") {
+                    alert("Error loading contestants: " + data.message);
+                    return;
                 }
+
+                const container = document.getElementById("contestantListContainer");
+                container.innerHTML = "";
+
+                data.data.forEach(contestant => {
+                    const card = document.createElement("div");
+                    card.classList.add("contestant-card");
+
+                    card.innerHTML = `
+                        <img src="${contestant.profilePicURL}" alt="${contestant.fullName}">
+                        <h3>${contestant.fullName}</h3>
+                        <p><strong>Artist Name:</strong> ${contestant.artistName}</p>
+                        <p><strong>Email:</strong> ${contestant.email}</p>
+                        <p><strong>Phone:</strong> ${contestant.phone}</p>
+                        <p><strong>Talent URL:</strong> <a href="${contestant.talentUrl}" target="_blank">View Talent</a></p>
+                        <p><strong>Talent Category:</strong> ${contestant.talentCategory}</p>
+                        <p><strong>County:</strong> ${contestant.county}</p>
+                        <p><strong>Unique Code:</strong> ${contestant.uniqueCode}</p>
+                        <p><strong>Votes:</strong> ${contestant.votes}</p>
+                    `;
+
+                    container.appendChild(card);
+                });
             })
             .catch(error => {
                 alert("Network error! Please try again.");
                 console.error("Error:", error);
             });
-            function loadContestants() {
-                const scriptURL = "https://script.google.com/macros/s/AKfycbwZTF1mkiyMBgMdGfD2u7qhrFW3PDepBBXdvnAMtfMLJk69JH9JBeiDc4RLp7OCs67v/exec";
-
-                fetch(scriptURL)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "error") {
-                        alert("Error loading contestants: " + data.message);
-                        return;
-                    }
-
-                    const container = document.getElementById("contestantListContainer");
-                    container.innerHTML = "";
-
-                    data.data.forEach(contestant => {
-                        const card = document.createElement("div");
-                        card.classList.add("contestant-card");
-
-                        card.innerHTML = `
-                            <img src="${contestant.profilePicURL}" alt="${contestant.fullName}">
-                            <h3>${contestant.fullName}</h3>
-                            <p><strong>Artist Name:</strong> ${contestant.artistName}</p>
-                            <p><strong>Email:</strong> ${contestant.email}</p>
-                            <p><strong>Phone:</strong> ${contestant.phone}</p>
-                            <p><strong>Talent URL:</strong> <a href="${contestant.talentUrl}" target="_blank">View Talent</a></p>
-                            <p><strong>Talent Category:</strong> ${contestant.talentCategory}</p>
-                            <p><strong>County:</strong> ${contestant.county}</p>
-                            <p><strong>Unique Code:</strong> ${contestant.uniqueCode}</p>
-                            <p><strong>Votes:</strong> ${contestant.votes}</p>
-                        `;
-
-                        container.appendChild(card);
-                    });
-                })
-                .catch(error => {
-                    alert("Network error! Please try again.");
-                    console.error("Error:", error);
-                });
-            }
-
-            loadContestants();
-        });
-        
+        }
     </script>
-    
 </body>
 </html>
