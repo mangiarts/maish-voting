@@ -300,7 +300,7 @@
             e.preventDefault();
             
             const formData = {
-                action: 'addContestant',
+                action: "addContestant",
                 fullName: document.getElementById("fullName").value,
                 artistName: document.getElementById("artistName").value,
                 email: document.getElementById("email").value,
@@ -313,31 +313,27 @@
                 uniqueCode: `TTS-${Date.now()}`
             };
 
-            fetch(scriptURL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            fetch("https://script.google.com/macros/s/AKfycbwITeLMzV4QRhcoJJ7g9E9rxuI05PVvaEfZLXD1M5X7hW-bGaTSL_U5jZ_Fi8dT1DpInw/exec", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
+            .then(response => response.json())  // ✅ Now we can read the response
             .then(data => {
-                console.log("Data saved:", data);
-                document.getElementById("adminAddForm").reset();
-                alert("Contestant added successfully!");
-                loadContestants();
+                console.log("Response from Google Apps Script:", data);
+                if (data.status === "success") {
+                    alert("Contestant added successfully!");
+                    document.getElementById("adminAddForm").reset();
+                    loadContestants();
+                } else {
+                    alert("Error: " + data.message);
+                }
             })
             .catch(error => {
                 console.error("Error details:", error);
                 alert("Failed to save data. Please try again.");
             });
         });
-
 
 
 
