@@ -316,27 +316,41 @@
                 gender: document.getElementById("gender").value,
                 talentCategory: document.getElementById("talentCategory").value,
                 county: document.getElementById("county").value,
-                uniqueCode: `MMTS-${Date.now()}`
+                uniqueCode: `TTS-${Date.now()}`
             };
+
+            console.log("Sending data:", formData);
 
             fetch(scriptURL, {
                 method: 'POST',
-                mode: 'no-cors',
+                mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formData)
             })
             .then(response => {
-                console.log("Response received:", response);
-                this.reset();
-                alert("Form submitted successfully!");
+                console.log("Raw response:", response);
+                return response.text().then(text => {
+                    console.log("Response text:", text);
+                    return text ? JSON.parse(text) : {};
+                });
+            })
+            .then(data => {
+                console.log("Processed data:", data);
+                if (data.status === 'success') {
+                    this.reset();
+                    alert("Contestant added successfully!");
+                } else {
+                    throw new Error(data.message || 'Unknown error');
+                }
             })
             .catch(error => {
-                console.log("Submission error:", error);
-                alert("Form submission failed. Please try again.");
+                console.log("Detailed error:", error);
+                alert(`Submission failed: ${error.message}`);
             });
         });
+
 
     </script>
 </body>
