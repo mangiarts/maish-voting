@@ -303,40 +303,41 @@
         
         document.getElementById("adminAddForm").addEventListener("submit", function(e) {
             e.preventDefault();
-            console.log("Form submitted");
+            console.log("Form submission started");
             
-            const formData = new FormData();
-            formData.append('action', 'addContestant');
-            formData.append('fullName', document.getElementById("fullName").value);
-            formData.append('artistName', document.getElementById("artistName").value);
-            formData.append('email', document.getElementById("email").value);
-            formData.append('phone', document.getElementById("phone").value);
-            formData.append('idNumber', document.getElementById("idNumber").value);
-            formData.append('talentUrl', document.getElementById("talentUrl").value);
-            formData.append('gender', document.getElementById("gender").value);
-            formData.append('talentCategory', document.getElementById("talentCategory").value);
-            formData.append('county', document.getElementById("county").value);
-            formData.append('uniqueCode', `TTS-${Date.now()}`);
+            const formData = {
+                action: 'addContestant',
+                fullName: document.getElementById("fullName").value,
+                artistName: document.getElementById("artistName").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                idNumber: document.getElementById("idNumber").value,
+                talentUrl: document.getElementById("talentUrl").value,
+                gender: document.getElementById("gender").value,
+                talentCategory: document.getElementById("talentCategory").value,
+                county: document.getElementById("county").value,
+                uniqueCode: `MMTS-${Date.now()}`
+            };
 
             fetch(scriptURL, {
                 method: 'POST',
-                body: formData
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
             })
             .then(response => {
                 console.log("Response received:", response);
-                return response.text();
-            })
-            .then(text => {
-                console.log("Server response:", text);
-                alert("Contestant added successfully!");
                 this.reset();
-                loadContestants();
+                alert("Form submitted successfully!");
             })
             .catch(error => {
-                console.log("Error:", error);
-                alert("Failed to add contestant. Please try again.");
+                console.log("Submission error:", error);
+                alert("Form submission failed. Please try again.");
             });
         });
+
     </script>
 </body>
 </html>
