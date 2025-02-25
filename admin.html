@@ -128,6 +128,10 @@
             const email = document.getElementById("admin-email").value;
             const password = document.getElementById("admin-password").value;
 
+            // Add these console logs here
+            console.log("Sending request to:", scriptURL);
+            console.log("With payload:", { action: "login", email, password });
+
             if (!email || !password) {
                 alert("Please enter your email and password.");
                 return;
@@ -137,9 +141,13 @@
 
             fetch(scriptURL, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
                 body: JSON.stringify({ action: "login", email, password })
             })
+
             .then(response => response.json())
             .then(data => {
                 console.log("Login Response:", data); // Debugging
@@ -162,6 +170,15 @@
             localStorage.removeItem("admin_authenticated");
             location.reload();
         }
+
+        function doPost(e) {
+            return ContentService.createTextOutput(JSON.stringify({
+                'status': 'success',
+                // your response data
+            }))
+            .setMimeType(ContentService.MimeType.JSON)
+            .addHeader('Access-Control-Allow-Origin', '*');
+            }
 
         function loadContestants() {
             const scriptURL = "https://script.google.com/macros/s/AKfycbwZTF1mkiyMBgMdGfD2u7qhrFW3PDepBBXdvnAMtfMLJk69JH9JBeiDc4RLp7OCs67v/exec"; // Update with correct URL
