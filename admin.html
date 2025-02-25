@@ -156,8 +156,14 @@
                 mode: "no-cors",
                 body: JSON.stringify({ action: "login", email: email, password: password })
             })
-
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text().then(text => {
+                    return text ? JSON.parse(text) : {};
+                });
+            })
             .then(data => {
                 console.log("Login Response:", data); // Debugging
                 if (data.status === "success") {
@@ -187,7 +193,7 @@
             }))
             .setMimeType(ContentService.MimeType.JSON)
             .addHeader('Access-Control-Allow-Origin', '*');
-            }
+        }
 
         function loadContestants() {
             const scriptURL = "https://script.google.com/macros/s/AKfycbwZTF1mkiyMBgMdGfD2u7qhrFW3PDepBBXdvnAMtfMLJk69JH9JBeiDc4RLp7OCs67v/exec"; // Update with correct URL
