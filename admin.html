@@ -303,37 +303,53 @@
         
         document.getElementById("adminAddForm").addEventListener("submit", function(e) {
             e.preventDefault();
-            console.log("Starting submission");
             
-            const formData = new URLSearchParams();
-            formData.append('action', 'addContestant');
-            formData.append('fullName', document.getElementById("fullName").value);
-            formData.append('artistName', document.getElementById("artistName").value);
-            formData.append('email', document.getElementById("email").value);
-            formData.append('phone', document.getElementById("phone").value);
-            formData.append('idNumber', document.getElementById("idNumber").value);
-            formData.append('talentUrl', document.getElementById("talentUrl").value);
-            formData.append('gender', document.getElementById("gender").value);
-            formData.append('talentCategory', document.getElementById("talentCategory").value);
-            formData.append('county', document.getElementById("county").value);
-            formData.append('uniqueCode', `TTS-${Date.now()}`);
+            // Get all form values
+            const formData = {
+                action: 'addContestant',
+                fullName: document.getElementById("fullName").value,
+                artistName: document.getElementById("artistName").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                idNumber: document.getElementById("idNumber").value,
+                talentUrl: document.getElementById("talentUrl").value,
+                gender: document.getElementById("gender").value,
+                talentCategory: document.getElementById("talentCategory").value,
+                county: document.getElementById("county").value,
+                uniqueCode: `TTS-${Date.now()}`
+            };
 
+            // Log the data being sent
+            console.log("Sending data:", formData);
+
+            // Send to Google Sheets
             fetch(scriptURL, {
                 method: 'POST',
-                mode: 'no-cors',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
             })
             .then(response => {
-                console.log("Submission successful");
-                this.reset();
+                console.log("Response received:", response);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data saved:", data);
+                document.getElementById("adminAddForm").reset();
                 alert("Contestant added successfully!");
                 loadContestants();
             })
             .catch(error => {
-                console.log("Submission error:", error);
-                alert("Please check your internet connection and try again");
+                console.log("Error:", error);
+                alert("Failed to save data. Please try again.");
             });
         });
+
+
 
 
 
