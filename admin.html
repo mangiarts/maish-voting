@@ -264,42 +264,39 @@
         function loadContestants() {
             const scriptURL = "https://script.google.com/macros/s/AKfycbyDlrd7OYWzx_Yv07mmKGslBPvIUh-5S7SC3TC5BtkBVzOy4dtLZHFxgIyKO6z0gyGE/exec"; // Update with correct URL
 
-            fetch(scriptURL)
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "error") {
-                    alert("Error loading contestants: " + data.message);
-                    return;
-                }
-
-                const container = document.getElementById("contestantListContainer");
-                container.innerHTML = "";
-
-                data.data.forEach(contestant => {
-                    const card = document.createElement("div");
-                    card.classList.add("contestant-card");
-
-                    card.innerHTML = `
-                        <img src="${contestant.profilePicURL}" alt="${contestant.fullName}">
-                        <h3>${contestant.fullName}</h3>
-                        <p><strong>Artist Name:</strong> ${contestant.artistName}</p>
-                        <p><strong>Email:</strong> ${contestant.email}</p>
-                        <p><strong>Phone:</strong> ${contestant.phone}</p>
-                        <p><strong>Talent URL:</strong> <a href="${contestant.talentUrl}" target="_blank">View Talent</a></p>
-                        <p><strong>Talent Category:</strong> ${contestant.talentCategory}</p>
-                        <p><strong>County:</strong> ${contestant.county}</p>
-                        <p><strong>Unique Code:</strong> ${contestant.uniqueCode}</p>
-                        <p><strong>Votes:</strong> ${contestant.votes}</p>
-                    `;
-
-                    container.appendChild(card);
-                });
+            fetch(scriptURL, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" }, // ✅ Send JSON data
+            body: JSON.stringify({
+                action: 'addContestant',
+                fullName: document.getElementById("fullName").value,
+                artistName: document.getElementById("artistName").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                idNumber: document.getElementById("idNumber").value,
+                talentUrl: document.getElementById("talentUrl").value,
+                gender: document.getElementById("gender").value,
+                talentCategory: document.getElementById("talentCategory").value,
+                county: document.getElementById("county").value,
+                uniqueCode: `TTS-${Date.now()}`
             })
-            .catch(error => {
-                alert("Network error! Please try again.");
-                console.error("Error:", error);
-            });
+        })
+        .then(response => response.json())  // ✅ Now we can read the response
+        .then(data => {
+            console.log("Response from Google Apps Script:", data);
+            if (data.status === "success") {
+                alert("Contestant added successfully!");
+                loadContestants(); // Refresh the list
+            } else {
+                alert("Error: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error details:", error);
+            alert("Network error - please check your connection and try again.");
+        });
         }
+
         
         document.getElementById("adminAddForm").addEventListener("submit", function(e) {
             e.preventDefault();
@@ -319,20 +316,38 @@
 
             // Using fetch with the correct configuration
             fetch(scriptURL, {
-                method: 'POST',
-                body: formData
+            method: 'POST',
+            headers: { "Content-Type": "application/json" }, // ✅ Send JSON data
+            body: JSON.stringify({
+                action: 'addContestant',
+                fullName: document.getElementById("fullName").value,
+                artistName: document.getElementById("artistName").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                idNumber: document.getElementById("idNumber").value,
+                talentUrl: document.getElementById("talentUrl").value,
+                gender: document.getElementById("gender").value,
+                talentCategory: document.getElementById("talentCategory").value,
+                county: document.getElementById("county").value,
+                uniqueCode: `TTS-${Date.now()}`
             })
-            .then(response => response.text()) // Get response as text
-            .then(data => {
-                console.log("Response from Google Apps Script:", data);
-                alert("Data saved successfully!");
+        })
+        .then(response => response.json())  // ✅ Now we can read the response
+        .then(data => {
+            console.log("Response from Google Apps Script:", data);
+            if (data.status === "success") {
+                alert("Contestant added successfully!");
                 loadContestants(); // Refresh the list
-            })
-            .catch(error => {
-                console.error("Error details:", error);
-                alert("Network error - please check your connection and try again.");
-            });
+            } else {
+                alert("Error: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error details:", error);
+            alert("Network error - please check your connection and try again.");
         });
+        });
+
 
 
     </script>
