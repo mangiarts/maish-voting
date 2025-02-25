@@ -154,6 +154,13 @@
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
             </select>
+            <select id="talentCategory">
+                <option value="">Select Category</option>
+                <option value="Music">Music</option>
+                <option value="Dj">Dj</option>
+                <option value="Art">Art</option>
+                <option value="Mc">Mc</option>
+            </select>
             <input type="text" id="talentCategory" placeholder="Talent Category" required>
             <input type="text" id="county" placeholder="County" required>
             <input type="file" id="profilePic" accept="image/*">
@@ -176,6 +183,7 @@
             }
             loadContestants();
         });
+        
 
         document.getElementById("auth-popup").addEventListener("submit", function(e) {
             e.preventDefault();
@@ -236,7 +244,12 @@
                 alert("Login failed: " + data.message);
             }
         }
-
+        function logout() {
+            localStorage.removeItem("admin_authenticated");
+            document.getElementById("auth-popup").style.display = "block";
+            document.getElementById("adminForm").style.display = "none";
+            document.getElementById("contestantList").style.display = "none";
+        }
 
         function doPost(e) {
             return ContentService.createTextOutput(JSON.stringify({
@@ -286,6 +299,43 @@
                 console.error("Error:", error);
             });
         }
+        
+        document.getElementById("adminAddForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            console.log("Form submitted");
+            
+            const formData = new FormData();
+            formData.append('action', 'addContestant');
+            formData.append('fullName', document.getElementById("fullName").value);
+            formData.append('artistName', document.getElementById("artistName").value);
+            formData.append('email', document.getElementById("email").value);
+            formData.append('phone', document.getElementById("phone").value);
+            formData.append('idNumber', document.getElementById("idNumber").value);
+            formData.append('talentUrl', document.getElementById("talentUrl").value);
+            formData.append('gender', document.getElementById("gender").value);
+            formData.append('talentCategory', document.getElementById("talentCategory").value);
+            formData.append('county', document.getElementById("county").value);
+            formData.append('uniqueCode', `TTS-${Date.now()}`);
+
+            fetch(scriptURL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log("Response received:", response);
+                return response.text();
+            })
+            .then(text => {
+                console.log("Server response:", text);
+                alert("Contestant added successfully!");
+                this.reset();
+                loadContestants();
+            })
+            .catch(error => {
+                console.log("Error:", error);
+                alert("Failed to add contestant. Please try again.");
+            });
+        });
     </script>
 </body>
 </html>
