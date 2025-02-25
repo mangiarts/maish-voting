@@ -262,7 +262,7 @@
         }
 
         function loadContestants() {
-            const scriptURL = "https://script.google.com/macros/s/AKfycbyDlrd7OYWzx_Yv07mmKGslBPvIUh-5S7SC3TC5BtkBVzOy4dtLZHFxgIyKO6z0gyGE/exec"; // Update with correct URL
+            const scriptURL = "https://script.google.com/macros/s/AKfycbytuG3sHGbBhPgTfAcm5S4Y2SqYMAnDpLjjRNermPy1VLGkMnkb9egZ1ERHdCzqLiSO/exec"; // Update with correct URL
 
             fetch(scriptURL, {
             method: 'POST',
@@ -296,29 +296,10 @@
             alert("Network error - please check your connection and try again.");
         });
         }
-
-        
         document.getElementById("adminAddForm").addEventListener("submit", function(e) {
             e.preventDefault();
             
-            const formData = new FormData();
-            formData.append('action', 'addContestant');
-            formData.append('fullName', document.getElementById("fullName").value);
-            formData.append('artistName', document.getElementById("artistName").value);
-            formData.append('email', document.getElementById("email").value);
-            formData.append('phone', document.getElementById("phone").value);
-            formData.append('idNumber', document.getElementById("idNumber").value);
-            formData.append('talentUrl', document.getElementById("talentUrl").value);
-            formData.append('gender', document.getElementById("gender").value);
-            formData.append('talentCategory', document.getElementById("talentCategory").value);
-            formData.append('county', document.getElementById("county").value);
-            formData.append('uniqueCode', `TTS-${Date.now()}`);
-
-            // Using fetch with the correct configuration
-            fetch(scriptURL, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" }, // ✅ Send JSON data
-            body: JSON.stringify({
+            const formData = {
                 action: 'addContestant',
                 fullName: document.getElementById("fullName").value,
                 artistName: document.getElementById("artistName").value,
@@ -330,23 +311,33 @@
                 talentCategory: document.getElementById("talentCategory").value,
                 county: document.getElementById("county").value,
                 uniqueCode: `TTS-${Date.now()}`
+            };
+
+            fetch(scriptURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
             })
-        })
-        .then(response => response.json())  // ✅ Now we can read the response
-        .then(data => {
-            console.log("Response from Google Apps Script:", data);
-            if (data.status === "success") {
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data saved:", data);
+                document.getElementById("adminAddForm").reset();
                 alert("Contestant added successfully!");
-                loadContestants(); // Refresh the list
-            } else {
-                alert("Error: " + data.message);
-            }
-        })
-        .catch(error => {
-            console.error("Error details:", error);
-            alert("Network error - please check your connection and try again.");
+                loadContestants();
+            })
+            .catch(error => {
+                console.error("Error details:", error);
+                alert("Failed to save data. Please try again.");
+            });
         });
-        });
+
 
 
 
