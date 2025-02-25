@@ -136,55 +136,55 @@
             const email = document.getElementById("admin-email").value;
             const password = document.getElementById("admin-password").value;
 
-            // Add these console logs here
-            console.log("Sending request to:", scriptURL);
-            console.log("With payload:", { action: "login", email, password });
-
-            if (!email || !password) {
-                alert("Please enter your email and password.");
-                return;
-            }
-
-            
+            console.log("Starting authentication...");
 
             fetch(scriptURL, {
                 method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
+                headers: {
+                    "Content-Type": "application/json"
                 },
                 mode: "no-cors",
-                body: JSON.stringify({ action: "login", email: email, password: password })
+                body: JSON.stringify({ 
+                    action: "login", 
+                    email: email, 
+                    password: password 
+                })
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text().then(text => {
-                    return text ? JSON.parse(text) : {};
-                });
-            })
-            .then(data => {
-                console.log("Login Response:", data); // Debugging
-                if (data.status === "success") {
+                console.log("Response received:", response);
+                if (response.type === 'opaque') {
+                    // Handle no-cors response
                     localStorage.setItem("admin_authenticated", "true");
                     document.getElementById("auth-popup").style.display = "none";
                     document.getElementById("adminForm").style.display = "block";
                     document.getElementById("contestantList").style.display = "block";
-                } else {
-                    alert("Login failed: " + data.message);
+                    return;
+                }
+                return response.text();
+            })
+            .then(text => {
+                if (text) {
+                    const data = JSON.parse(text);
+                    handleLoginResponse(data);
                 }
             })
             .catch(error => {
+                console.log("Error details:", error);
                 alert("Login failed. Please check your network and try again.");
-                console.error("Error:", error);
             });
         }
 
-        function logout() {
-            localStorage.removeItem("admin_authenticated");
-            location.reload();
+        function handleLoginResponse(data) {
+            if (data.status === "success") {
+                localStorage.setItem("admin_authenticated", "true");
+                document.getElementById("auth-popup").style.display = "none";
+                document.getElementById("adminForm").style.display = "block";
+                document.getElementById("contestantList").style.display = "block";
+            } else {
+                alert("Login failed: " + data.message);
+            }
         }
+
 
         function doPost(e) {
             return ContentService.createTextOutput(JSON.stringify({
