@@ -136,33 +136,43 @@
             const email = document.getElementById("admin-email").value;
             const password = document.getElementById("admin-password").value;
 
-            console.log("Authentication started");
+            console.log("Starting authentication...");
 
             fetch(scriptURL, {
                 method: "POST",
-                body: new URLSearchParams({
-                    'action': 'login',
-                    'email': email,
-                    'password': password
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                mode: "no-cors",
+                body: JSON.stringify({ 
+                    action: "login", 
+                    email: email, 
+                    password: password 
                 })
             })
             .then(response => {
-                if (response.ok) {
+                console.log("Response received:", response);
+                if (response.type === 'opaque') {
+                    // Handle no-cors response
                     localStorage.setItem("admin_authenticated", "true");
                     document.getElementById("auth-popup").style.display = "none";
                     document.getElementById("adminForm").style.display = "block";
                     document.getElementById("contestantList").style.display = "block";
-                    console.log("Login successful");
-                } else {
-                    throw new Error('Login failed');
+                    return;
+                }
+                return response.text();
+            })
+            .then(text => {
+                if (text) {
+                    const data = JSON.parse(text);
+                    handleLoginResponse(data);
                 }
             })
             .catch(error => {
-                console.log("Error:", error);
-                alert("Login failed. Please try again.");
+                console.log("Error details:", error);
+                alert("Login failed. Please check your network and try again.");
             });
         }
-
 
         function handleLoginResponse(data) {
             if (data.status === "success") {
