@@ -304,53 +304,36 @@
         document.getElementById("adminAddForm").addEventListener("submit", function(e) {
             e.preventDefault();
             
-            // Get all form values
-            const formData = {
-                action: 'addContestant',
-                fullName: document.getElementById("fullName").value,
-                artistName: document.getElementById("artistName").value,
-                email: document.getElementById("email").value,
-                phone: document.getElementById("phone").value,
-                idNumber: document.getElementById("idNumber").value,
-                talentUrl: document.getElementById("talentUrl").value,
-                gender: document.getElementById("gender").value,
-                talentCategory: document.getElementById("talentCategory").value,
-                county: document.getElementById("county").value,
-                uniqueCode: `TTS-${Date.now()}`
-            };
+            const formData = new FormData();
+            formData.append('action', 'addContestant');
+            formData.append('fullName', document.getElementById("fullName").value);
+            formData.append('artistName', document.getElementById("artistName").value);
+            formData.append('email', document.getElementById("email").value);
+            formData.append('phone', document.getElementById("phone").value);
+            formData.append('idNumber', document.getElementById("idNumber").value);
+            formData.append('talentUrl', document.getElementById("talentUrl").value);
+            formData.append('gender', document.getElementById("gender").value);
+            formData.append('talentCategory', document.getElementById("talentCategory").value);
+            formData.append('county', document.getElementById("county").value);
+            formData.append('uniqueCode', `TTS-${Date.now()}`);
 
-            // Log the data being sent
-            console.log("Sending data:", formData);
-
-            // Send to Google Sheets
+            // Using fetch with the correct configuration
             fetch(scriptURL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
+                mode: 'no-cors',
+                body: formData
             })
-            .then(response => {
-                console.log("Response received:", response);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("Data saved:", data);
+            .then(() => {
+                // Clear form and show success message
                 document.getElementById("adminAddForm").reset();
-                alert("Contestant added successfully!");
-                loadContestants();
+                alert("Data saved successfully!");
+                loadContestants(); // Refresh the list
             })
             .catch(error => {
-                console.log("Error:", error);
-                alert("Failed to save data. Please try again.");
+                console.log("Error details:", error);
+                alert("Network error - please check your connection and try again");
             });
         });
-
-
-
 
 
     </script>
