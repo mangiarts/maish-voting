@@ -253,14 +253,18 @@
         }
 
         function doPost(e) {
-            return ContentService.createTextOutput(JSON.stringify({
-                'status': 'success',
-                // your response data
-            }))
-            .setMimeType(ContentService.MimeType.JSON)
-            .addHeader('Access-Control-Allow-Origin', '*');
-        }
+            const action = e.parameter.action;
 
+            if (action === "uploadImage") {
+                const folderId = "1nuN2EgzGEL6bvnDt0XXKOj_Zff8sS9KD"; // Your folder ID
+                const folder = DriveApp.getFolderById(folderId);
+                
+                const blob = Utilities.newBlob(Utilities.base64Decode(e.parameter.image), e.parameter.mimeType, e.parameter.filename);
+                const file = folder.createFile(blob); // Save the file to the specified folder
+                return ContentService.createTextOutput(JSON.stringify({ status: 'success', url: file.getUrl() }))
+                    .setMimeType(ContentService.MimeType.JSON);
+            }
+        }
         function loadContestants() {
             const scriptURL = "https://script.google.com/macros/s/AKfycbytuG3sHGbBhPgTfAcm5S4Y2SqYMAnDpLjjRNermPy1VLGkMnkb9egZ1ERHdCzqLiSO/exec"; // Update with correct URL
 
@@ -299,43 +303,78 @@
         document.getElementById("adminAddForm").addEventListener("submit", function(e) {
             e.preventDefault();
             
-            const formData = {
-                action: "addContestant",
-                fullName: document.getElementById("fullName").value,
-                artistName: document.getElementById("artistName").value,
-                email: document.getElementById("email").value,
-                phone: document.getElementById("phone").value,
-                idNumber: document.getElementById("idNumber").value,
-                talentUrl: document.getElementById("talentUrl").value,
-                gender: document.getElementById("gender").value,
-                talentCategory: document.getElementById("talentCategory").value,
-                county: document.getElementById("county").value,
-                uniqueCode: `TTS-${Date.now()}`
-            };
+            const fileInput = document.getElementById("profilePic");
+            const file = fileInput.files[0];
 
-            fetch("https://script.google.com/macros/s/AKfycbwITeLMzV4QRhcoJJ7g9E9rxuI05PVvaEfZLXD1M5X7hW-bGaTSL_U5jZ_Fi8dT1DpInw/exec", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())  // ✅ Now we can read the response
-            .then(data => {
-                console.log("Response from Google Apps Script:", data);
-                if (data.status === "success") {
-                    alert("Contestant added successfully!");
-                    document.getElementById("adminAddForm").reset();
-                    loadContestants();
-                } else {
-                    alert("Error: " + data.message);
-                }
-            })
-            .catch(error => {
-                console.error("Error details:", error);
-                alert("Failed to save data. Please try again.");
-            });
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    const base64data = reader.result.split(',')[1]; // Get base64 string
+                    const formData = {
+                        action: "uploadImage",
+                        image: base64data,
+                        mimeType: file.type,
+                        filename: file.name
+                    };
+
+                    fetch("https://script.google.com/macros/s/AKfycbwITeLMzV4QRhcoJJ7g9E9rxuI05PVvaEfZLXD1M5X7hW-bGaTSL_U5jZ_Fi8dT1DpInw/exec", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(formData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "success") {
+                            const imageUrl = data.url;
+                            const contestantData = {
+                                action: "addContestant",
+                                fullName: document.getElementById("fullName").value,
+                                artistName: document.getElementById("artistName").value,
+                                email: document.getElementById("email").value,
+                                phone: document.getElementById("phone").value,
+                                idNumber: document.getElementById("idNumber").value,
+                                talentUrl: document.getElementById("talentUrl").value,
+                                gender: document.getElementById("gender").value,
+                                talentCategory: document.getElementById("talentCategory").value,
+                                county: document.getElementById("county").value,
+                                profilePicUrl: imageUrl, // Add the image URL here
+                                uniqueCode: `TTS-${Date.now()}`
+                            };
+
+                            // Now submit the contestant data
+                            fetch("https://script.google.com/macros/s/AKfycbwITeLMzV4QRhcoJJ7g9E9rxuI05PVvaEfZLXD1M5X7hW-bGaTSL_U5jZ_Fi8dT1DpInw/exec", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(contestantData)
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === "success") {
+                                    alert("Contestant added successfully!");
+                                    document.getElementById("adminAddForm").reset();
+                                    loadContestants(); // Refresh the list
+                                } else {
+                                    alert("Error: " + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error details:", error);
+                                alert("Failed to save data. Please try again.");
+                            });
+                        } else {
+                            alert("Image upload failed: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error details:", error);
+                        alert("Failed to upload image. Please try again.");
+                    });
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please select an image to upload.");
+            }
         });
-
-
 
     </script>
 </body>
